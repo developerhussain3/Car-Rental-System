@@ -1,0 +1,2515 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Car Rent System</title>
+    <style>
+      :root {
+        --bg1: #0f172a;
+        --bg2: #071130;
+        --accent: #ff6b6b;
+        --accent2: #6be3ff;
+        --card: #0b1220;
+        --glass: rgba(255, 255, 255, 0.06);
+        --text: #e6eef8;
+        font-family: Inter, system-ui, sans-serif;
+      }
+      body {
+        margin: 0;
+        background: linear-gradient(var(--bg1), var(--bg2));
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      a {
+        text-decoration: none;
+        color: var(--text);
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 28px;
+        position: sticky;
+        top: 0;
+        backdrop-filter: blur(6px);
+        z-index: 10;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .logo {
+        width: 46px;
+        height: 46px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        font-weight: 800;
+        color: #071130;
+      }
+      .nav-links {
+        display: flex;
+        gap: 18px;
+      }
+      .nav-links a {
+        font-weight: 600;
+        transition: color 0.3s;
+      }
+      .nav-links a:hover {
+        color: var(--accent2);
+      }
+      .hamburger {
+        display: none;
+        flex-direction: column;
+        gap: 4px;
+        cursor: pointer;
+      }
+      .hamburger span {
+        width: 25px;
+        height: 3px;
+        background: var(--text);
+        border-radius: 2px;
+        transition: all 0.3s;
+      }
+      .hamburger.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+      .hamburger.active span:nth-child(2) {
+        opacity: 0;
+      }
+      .hamburger.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -6px);
+      }
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+          flex-direction: column;
+          position: absolute;
+          top: 70px;
+          right: 28px;
+          background: var(--bg2);
+          padding: 16px;
+          border-radius: 12px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .nav-links.active {
+          display: flex;
+        }
+        .hamburger {
+          display: flex;
+        }
+      }
+
+      /* Hero */
+      .hero {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        padding: 36px;
+        align-items: center;
+      }
+      .hero-left {
+        z-index: 1;
+      }
+      .hero-left h1 {
+        font-size: 2.4rem;
+      }
+      .logo-text {
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+        background-clip: text;
+        color: transparent;
+      }
+      .lead {
+        margin: 12px 0;
+        font-size: 1rem;
+      }
+      .hero-buttons {
+        display: flex;
+        gap: 12px;
+      }
+      .hero .stage {
+        position: relative;
+        border-radius: 18px;
+        overflow: hidden;
+        height: 320px;
+      }
+      .hero .stage video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 18px;
+      }
+
+      /* Fleet cards */
+      .controls {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        padding: 0 36px;
+      }
+      .controls input,
+      .controls select {
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: none;
+        background: var(--card);
+        color: var(--text);
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 18px;
+        padding: 0 36px 48px;
+      }
+      /* Card base styles (kept later once) */
+      .price {
+        font-weight: 700;
+        color: var(--accent2);
+      }
+      .btn {
+        background: white;
+        padding: 10px 14px;
+        border-radius: 10px;
+        color: #071130;
+        font-weight: 700;
+        cursor: pointer;
+        border: none;
+        transition: all 0.3s;
+      }
+      .btn:hover {
+        background: black;
+        color: white;
+        transform: translateX(1px);
+      }
+      
+      /* About Section */
+      .about-section {
+        padding: 60px 36px;
+        background: rgba(255, 255, 255, 0.03);
+        margin-top: 40px;
+      }
+      .about-content {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      .about-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-top: 40px;
+      }
+      .about-card {
+        background: var(--card);
+        padding: 24px;
+        border-radius: 12px;
+        transition: transform 0.3s;
+      }
+      .about-card:hover {
+        transform: translateY(-5px);
+      }
+      .about-card h3 {
+        color: var(--accent2);
+        margin-top: 0;
+      }
+      .ceo-section {
+        text-align: center;
+        margin-top: 60px;
+      }
+      .ceo {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 20px auto;
+        transition: transform 0.5s;
+        border: 3px solid var(--accent2);
+      }
+      .ceo:hover {
+        transform: scale(1.05);
+        cursor: pointer;
+      }
+      
+      /* Contact Section */
+      .contact-section {
+        padding: 60px 36px;
+      }
+      .contact-content {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-top: 40px;
+      }
+      .contact-card {
+        background: var(--card);
+        padding: 24px;
+        border-radius: 12px;
+        text-align: center;
+        transition: transform 0.3s;
+      }
+      .contact-card:hover {
+        transform: translateY(-5px);
+      }
+      .contact-card h3 {
+        color: var(--accent2);
+        margin-top: 0;
+      }
+      .contact-form {
+        background: var(--card);
+        padding: 30px;
+        border-radius: 12px;
+        margin-top: 30px;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: none;
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text);
+        box-sizing: border-box;
+      }
+      .form-group textarea {
+        height: 120px;
+        resize: vertical;
+      }
+      
+      /* Modal */
+      .modal {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(2, 6, 23, 0.6);
+        opacity: 0;
+        pointer-events: none;
+        transition: 0.2s;
+        z-index: 100;
+      }
+      .modal.open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .modal-card {
+        width: 420px;
+        background: linear-gradient(180deg, #071225, #08142a);
+        padding: 24px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.03);
+      }
+      .field {
+        margin-bottom: 16px;
+      }
+      .field label {
+        font-size: 14px;
+        opacity: 0.8;
+        margin-bottom: 4px;
+        display: block;
+      }
+      .modal-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+        margin-top: 20px;
+      }
+      .total-amount {
+        font-weight: 700;
+        color: var(--accent2);
+        font-size: 1.2rem;
+        margin-top: 10px;
+      }
+
+      /* Footer */
+      footer {
+        text-align: center;
+        padding: 24px;
+        background: #000;
+        margin-top: auto;
+      }
+
+      @media (max-width: 768px) {
+        .hero {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto auto;
+        }
+        .controls, .cards {
+          padding-left: 20px;
+          padding-right: 20px;
+        }
+        .about-section, .contact-section {
+          padding: 40px 20px;
+        }
+      }
+      /*  new file css */
+      /* Animation keyframes */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Animation classes */
+.animate-fadeInUp {
+  animation: fadeInUp 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-fadeInLeft {
+  animation: fadeInLeft 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-fadeInRight {
+  animation: fadeInRight 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 1s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-slideInDown {
+  animation: slideInDown 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-bounceIn {
+  animation: bounceIn 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Stagger delays for sequential animations */
+.delay-100 {
+  animation-delay: 0.1s;
+}
+
+.delay-200 {
+  animation-delay: 0.2s;
+}
+
+.delay-300 {
+  animation-delay: 0.3s;
+}
+
+.delay-400 {
+  animation-delay: 0.4s;
+}
+
+.delay-500 {
+  animation-delay: 0.5s;
+}
+
+.delay-600 {
+  animation-delay: 0.6s;
+}
+
+.delay-700 {
+  animation-delay: 0.7s;
+}
+
+.delay-800 {
+  animation-delay: 0.8s;
+}
+
+/* Apply animations to elements */
+header {
+  animation: slideInDown 0.8s ease-out;
+}
+
+.brand {
+  animation: fadeInLeft 0.8s ease-out;
+}
+
+.nav-links {
+  animation: fadeInRight 0.8s ease-out;
+}
+
+.hero-left h1 {
+  animation: fadeInUp 0.8s ease-out 0.2s forwards;
+  opacity: 0;
+}
+
+.hero-left .lead {
+  animation: fadeInUp 0.8s ease-out 0.4s forwards;
+  opacity: 0;
+}
+
+.hero-buttons {
+  animation: fadeInUp 0.8s ease-out 0.6s forwards;
+  opacity: 0;
+}
+
+.hero .stage {
+  animation: fadeInRight 1s ease-out 0.3s forwards;
+  opacity: 0;
+}
+
+.card {
+  animation: scaleIn 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+/* Stagger animation for cards */
+.card:nth-child(1) { animation-delay: 0.1s; }
+.card:nth-child(2) { animation-delay: 0.2s; }
+.card:nth-child(3) { animation-delay: 0.3s; }
+.card:nth-child(4) { animation-delay: 0.4s; }
+.card:nth-child(5) { animation-delay: 0.5s; }
+
+.about-section h2 {
+  animation: fadeInLeft 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.about-card {
+  animation: fadeInUp 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.about-card:nth-child(1) { animation-delay: 0.2s; }
+.about-card:nth-child(2) { animation-delay: 0.4s; }
+
+.ceo-section {
+  animation: fadeInUp 0.8s ease-out 0.6s forwards;
+  opacity: 0;
+}
+
+.contact-section h2 {
+  animation: fadeInLeft 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.contact-card {
+  animation: fadeInUp 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.contact-card:nth-child(1) { animation-delay: 0.2s; }
+.contact-card:nth-child(2) { animation-delay: 0.3s; }
+.contact-card:nth-child(3) { animation-delay: 0.4s; }
+
+.contact-form {
+  animation: scaleIn 0.8s ease-out 0.5s forwards;
+  opacity: 0;
+}
+
+footer {
+  animation: fadeInUp 0.8s ease-out 0.3s forwards;
+  opacity: 0;
+}
+
+/* Hover animations */
+.btn:hover {
+  animation: pulse 0.5s ease-in-out;
+}
+
+      /* removed .card:hover animation (conflicted with transform hover) */
+
+.ceo:hover {
+  animation: pulse 0.5s ease-in-out;
+}
+
+/* Scroll animations */
+.fade-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s ease-out;
+}
+
+.fade-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Smooth page transitions */
+body {
+  animation: fadeIn 1s ease-out;
+}
+
+/* Loading animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-spinner {
+  animation: spin 3s linear infinite;
+}
+
+/* Text animation */
+@keyframes typewriter {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.typewriter {
+  overflow: hidden;
+  border-right: 2px solid var(--accent2);
+  white-space: nowrap;
+  animation: typewriter 3s steps(40) 1s forwards;
+  width: 0;
+}
+
+/* Gradient animation */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animated-gradient {
+  background: linear-gradient(-45deg, var(--accent), var(--accent2), #ff6b6b, #6be3ff);
+  background-size: 400% 400%;
+  animation: gradientShift 3s ease infinite;
+}
+
+/* Enhanced existing styles with transitions */
+body {
+  margin: 0;
+  background: linear-gradient(var(--bg1), var(--bg2));
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  text-decoration: none;
+  color: var(--text);
+  transition: color 0.3s ease;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 28px;
+  position: sticky;
+  top: 0;
+  backdrop-filter: blur(6px);
+  z-index: 10;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo {
+  width: 46px;
+  height: 46px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-weight: 800;
+  color: #071130;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: rotate(10deg) scale(1.1);
+}
+
+.nav-links {
+  display: flex;
+  gap: 18px;
+}
+
+.nav-links a {
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: var(--accent2);
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.hamburger span {
+  width: 25px;
+  height: 3px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -6px);
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 70px;
+    right: 28px;
+    background: var(--bg2);
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    animation: fadeInDown 2s ease-out;
+  }
+  
+  .nav-links.active {
+    display: flex;
+  }
+  
+  .hamburger {
+    display: flex;
+  }
+}
+
+/* Hero */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 36px;
+  align-items: center;
+}
+
+.hero-left {
+  z-index: 1;
+}
+
+.hero-left h1 {
+  font-size: 2.4rem;
+}
+
+.logo-text {
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  background-clip: text;
+  color: transparent;
+  animation: gradientShift 4s ease infinite;
+}
+
+.lead {
+  margin: 12px 0;
+  font-size: 1rem;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.hero .stage {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  height: 320px;
+  transition: transform 0.5s ease;
+}
+
+.hero .stage:hover {
+  transform: perspective(1000px) rotateY(5deg) rotateX(5deg);
+}
+
+.hero .stage video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 18px;
+  transition: transform 0.5s ease;
+}
+
+.hero .stage:hover video {
+  transform: scale(1.05);
+}
+
+/* Fleet cards */
+.controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+  padding: 0 36px;
+}
+
+.controls input,
+.controls select {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: var(--card);
+  color: var(--text);
+  transition: all 0.3s ease;
+}
+
+.controls input:focus,
+.controls select:focus {
+  outline: 2px solid var(--accent2);
+  transform: scale(1.02);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  padding: 0 36px 48px;
+}
+
+.card {
+  background: linear-gradient(180deg, var(--card), rgba(255, 255, 255, 0.02));
+  border-radius: 14px;
+  padding: 12px;
+  transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transition: left 0.5s;
+  pointer-events: none;
+}
+
+.card:hover::before {
+  left: 100%;
+}
+
+ .card img {
+  width: 100%;
+  border-radius: 12px;
+  height: 160px;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+  transform-origin: center center;
+  will-change: transform;
+ }
+
+ .card:hover img {
+  transform: scale(1.05);
+ }
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+.price {
+  font-weight: 700;
+  color: var(--accent2);
+}
+
+.btn {
+  background: white;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: #071130;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transition: left 0.5s;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn:hover {
+  background: black;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* About Section */
+.about-section {
+  padding: 60px 36px;
+  background: rgba(255, 255, 255, 0.03);
+  margin-top: 40px;
+}
+
+.about-content {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.about-card {
+  background: var(--card);
+  padding: 24px;
+  border-radius: 12px;
+  transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.about-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, var(--accent), var(--accent2));
+  transform: scaleY(0);
+  transition: transform 0.3s;
+}
+
+.about-card:hover::before {
+  transform: scaleY(1);
+}
+
+.about-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.about-card h3 {
+  color: var(--accent2);
+  margin-top: 0;
+}
+
+.ceo-section {
+  text-align: center;
+  margin-top: 60px;
+}
+
+.ceo {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 20px auto;
+  transition: transform 0.5s;
+  border: 3px solid var(--accent2);
+  box-shadow: 0 0 20px rgba(107, 227, 255, 0.3);
+}
+
+.ceo:hover {
+  transform: scale(1.05);
+  cursor: pointer;
+  box-shadow: 0 0 30px rgba(107, 227, 255, 0.5);
+}
+
+/* Contact Section */
+.contact-section {
+  padding: 60px 36px;
+}
+
+.contact-content {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.contact-card {
+  background: var(--card);
+  padding: 24px;
+  border-radius: 12px;
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.contact-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.contact-card h3 {
+  color: var(--accent2);
+  margin-top: 0;
+}
+
+.contact-form {
+  background: var(--card);
+  padding: 30px;
+  border-radius: 12px;
+  margin-top: 30px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.contact-form:hover {
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: 2px solid var(--accent2);
+  transform: scale(1.02);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.form-group textarea {
+  height: 120px;
+  resize: vertical;
+}
+
+/* Register Modal Styles */
+#registerModal .modal-card {
+  width: 380px;
+  background: linear-gradient(135deg, #071225 0%, #08142a 100%);
+  padding: 24px;
+  border-radius: 16px;
+  border: 2px solid rgba(107, 227, 255, 0.2);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  animation: slideInDown 0.6s ease-out;
+}
+
+#registerModal .modal-card h3 {
+  margin: 0 0 20px 0;
+  color: var(--accent2);
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  background-clip: text;
+  color: transparent;
+}
+
+#registerModal .field {
+  margin-bottom: 16px;
+  position: relative;
+}
+
+#registerModal .field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.85;
+  margin-bottom: 6px;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#registerModal .field input,
+#registerModal .field select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1.5px solid rgba(107, 227, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+}
+
+#registerModal .field input::placeholder {
+  color: rgba(230, 238, 248, 0.4);
+}
+
+#registerModal .field input:focus,
+#registerModal .field select:focus {
+  outline: none;
+  border-color: var(--accent2);
+  background: rgba(107, 227, 255, 0.08);
+  box-shadow: 0 0 16px rgba(107, 227, 255, 0.2), inset 0 0 8px rgba(107, 227, 255, 0.05);
+  transform: translateY(-2px);
+}
+
+#registerModal .field input[type="checkbox"] {
+  width: auto;
+  margin-right: 8px;
+  cursor: pointer;
+  accent-color: var(--accent2);
+  transform: scale(1.2);
+}
+
+#registerModal .field label[for*="Terms"] {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: normal;
+  margin-bottom: 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+#registerMessage {
+  text-align: center;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  min-height: 16px;
+  animation: slideInDown 0.4s ease-out;
+}
+
+#registerMessage.success {
+  background: rgba(46, 204, 113, 0.15);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+#registerMessage.error {
+  background: rgba(255, 107, 107, 0.15);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+#registerModal .modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+#registerModal .modal-actions button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#registerModal #confirmRegister {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: white;
+  box-shadow: 0 8px 24px rgba(255, 107, 107, 0.3);
+}
+
+#registerModal #confirmRegister:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(255, 107, 107, 0.4);
+}
+
+#registerModal #confirmRegister:active {
+  transform: translateY(-1px);
+}
+
+#registerModal #closeRegister {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+}
+
+#registerModal #closeRegister:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  #registerModal .modal-card {
+    width: 85%;
+    max-width: 380px;
+    padding: 20px;
+  }
+}
+
+/* Login Modal Styles */
+#loginModal .modal-card {
+  width: 380px;
+  background: linear-gradient(135deg, #071225 0%, #08142a 100%);
+  padding: 24px;
+  border-radius: 16px;
+  border: 2px solid rgba(107, 227, 255, 0.2);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  animation: slideInDown 0.6s ease-out;
+}
+
+#loginModal .modal-card h3 {
+  margin: 0 0 20px 0;
+  color: var(--accent2);
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  background-clip: text;
+  color: transparent;
+}
+
+#loginModal .field {
+  margin-bottom: 16px;
+  position: relative;
+}
+
+#loginModal .field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.85;
+  margin-bottom: 6px;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#loginModal .field input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1.5px solid rgba(107, 227, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+}
+
+#loginModal .field input::placeholder {
+  color: rgba(230, 238, 248, 0.4);
+}
+
+#loginModal .field input:focus {
+  outline: none;
+  border-color: var(--accent2);
+  background: rgba(107, 227, 255, 0.08);
+  box-shadow: 0 0 16px rgba(107, 227, 255, 0.2), inset 0 0 8px rgba(107, 227, 255, 0.05);
+  transform: translateY(-2px);
+}
+
+#loginMessage {
+  text-align: center;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  min-height: 16px;
+  animation: slideInDown 0.4s ease-out;
+}
+
+#loginMessage.success {
+  background: rgba(46, 204, 113, 0.15);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+#loginMessage.error {
+  background: rgba(255, 107, 107, 0.15);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+#loginModal .modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+#loginModal .modal-actions button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#loginModal #confirmLogin {
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  color: white;
+  box-shadow: 0 8px 24px rgba(107, 227, 255, 0.3);
+}
+
+#loginModal #confirmLogin:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(107, 227, 255, 0.4);
+}
+
+#loginModal #confirmLogin:active {
+  transform: translateY(-1px);
+}
+
+#loginModal #closeLogin {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+}
+
+#loginModal #closeLogin:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+#switchToRegister:hover {
+  color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  #loginModal .modal-card {
+    width: 85%;
+    max-width: 380px;
+    padding: 20px;
+  }
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2, 6, 23, 0.6);
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.2s;
+  z-index: 100;
+  animation: fadeIn 1s ease-out;
+}
+
+.modal.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  width: 420px;
+  background: linear-gradient(180deg, #071225, #08142a);
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  animation: scaleIn 1s ease-out;
+}
+
+/* Add Car Modal Styles */
+.add-car-modal-card {
+  width: 500px;
+  background: linear-gradient(180deg, #071225, #08142a);
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  animation: scaleIn 1s ease-out;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.add-car-modal-card h3 {
+  margin-top: 0;
+  color: var(--accent2);
+  margin-bottom: 20px;
+}
+
+.image-preview {
+  width: 100%;
+  height: 200px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-bottom: 12px;
+  border: 2px dashed var(--accent2);
+  display: none;
+}
+
+.image-preview.show {
+  display: block;
+}
+
+.file-input-wrapper {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.file-input-wrapper input[type="file"] {
+  display: none;
+}
+
+.file-input-label {
+  display: block;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px dashed var(--accent2);
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--accent2);
+  font-weight: 600;
+}
+
+.file-input-label:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: scale(1.02);
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+.field label {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.total-amount {
+  font-weight: 700;
+  color: var(--accent2);
+  font-size: 1.2rem;
+  margin-top: 10px;
+  animation: pulse 2s infinite;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 24px;
+  background: #000;
+  margin-top: auto;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+  }
+  
+  .controls, .cards {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  .about-section, .contact-section {
+    padding: 40px 20px;
+  }
+}
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <div class="logo" style="cursor: pointer">CRS</div>
+        <div>
+          <div class="brand-name" style="cursor: pointer">
+            Car Rental System
+          </div>
+        </div>
+      </div>
+
+      <nav class="nav-links">
+        <a href="#home" class="nav">Home</a>
+        <a href="#about" class="nav">About</a>
+        <a href="#cars" class="nav">Cars</a>
+        <a href="#contact" class="nav">Contact us</a>
+        <button class="btn" id="loginBtn" style="background: var(--accent2); color: #071130; padding: 8px 14px; font-size: 0.9rem;">Login</button>
+        <button class="btn" id="registerBtn" style="background: var(--accent); color: white; padding: 8px 14px; font-size: 0.9rem;">Register</button>
+      </nav>
+
+      <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </header>
+
+    <main>
+      <!-- Hero Section -->
+      <section class="hero" id="home">
+        <div class="hero-left">
+          <h1>
+            Your perfect journey starts here —
+            <span class="logo-text">smooth, fast, reliable</span>
+          </h1>
+          <p class="lead">
+            Select from a curated fleet, preview animated rides, and book in
+            seconds.
+          </p>
+          <div class="hero-buttons">
+            <button class="btn" id="ctaViewFleet">View Fleet</button>
+            <button class="btn" id="rentCarBtn" style="background: var(--accent); color: white;">Rent a Car</button>
+            <button class="btn" id="returnCarBtn" style="background: var(--accent2); color: #071130;">Return a Car</button>
+          </div>
+        </div>
+        <div class="stage">
+          <video src="./Lamborghini2.mp4" autoplay muted loop></video>
+        </div>
+      </section>
+
+      <!-- Car List -->
+      <section class="car-list-section" id="cars">
+        <div class="controls">
+          <input id="searchCar" placeholder="Search car model or feature..." />
+          <select id="filterType">
+            <option value="all">All types</option>
+            <option value="sedan">Sedan</option>
+            <option value="suv">SUV</option>
+            <option value="electric">Electric</option>
+          </select>
+          <button class="btn" id="resetFilter">Reset</button>
+        </div>
+        <div class="cards" id="cardsContainer"></div>
+      </section>
+      
+      <!-- About Section -->
+      <section class="about-section" id="about">
+        <div class="about-content">
+          <h2>About Us</h2>
+          <h3>Who we are?</h3>
+          <p>We are Dev Ninjas, a passionate team of full-stack developers dedicated to building smart, fast, and user-friendly digital solutions. Recently, we developed our featured project — the Car Rental System, a modern platform designed to make car booking quick, secure, and effortless for everyone.</p>
+          
+          <h3>Our mission is simple:</h3>
+          <p>to solve real-world problems through clean code, creative thinking, and powerful technology.</p>
+          
+          <div class="about-grid">
+            <div class="about-card">
+              <h3>Our Focus</h3>
+              <p>✔️ Crafting smooth and responsive user experiences</p>
+              <p>✔️ Designing efficient systems that work in real life</p>
+              <p>✔️ Bringing innovative ideas to life</p>
+              <p>✔️ Writing clean, scalable, and reliable code</p>
+            </div>
+            <div class="about-card">
+              <h3>Our Vision</h3>
+              <p>With every project, we aim to push boundaries, learn more, and deliver solutions that truly help people.</p>
+              <p>We are not just developers — we are creators, problem-solvers, and innovators. Welcome to the future built by Dev Ninjas. 🥷💻✨</p>
+            </div>
+          </div>
+          
+          <div class="ceo-section">
+            <h2>Meet our CEO | Hussain Kamal</h2>
+            <img class="ceo" src="./hussain.jpg" alt="CEO">
+            <p>Leading our team with vision and expertise</p>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Contact Section -->
+      <section class="contact-section" id="contact">
+        <div class="contact-content">
+          <h2>Contact Us</h2>
+          <p>Have questions or need assistance? Get in touch with our team.</p>
+          
+          <div class="contact-grid">
+            <div class="contact-card">
+              <h3>Email</h3>
+              <p>developerhussain3@gmail.com</p>
+            </div>
+            <div class="contact-card">
+              <h3>Phone</h3>
+              <p>+923160362785</p>
+            </div>
+            <div class="contact-card">
+              <h3>Address</h3>
+              <p>Dadu, Sindh</p>
+            </div>
+          </div>
+          
+          <div class="contact-form">
+            <h3>Send us a Message</h3>
+            <div class="form-group">
+              <label for="name">Your Name</label>
+              <input type="text" id="name" placeholder="Enter your name">
+            </div>
+            <div class="form-group">
+              <label for="email">Your Email</label>
+              <input type="email" id="email" placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+              <label for="message">Your Message</label>
+              <textarea id="message" placeholder="Enter your message"></textarea>
+            </div>
+            <button class="btn" id="sendMessage">Send Message</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Booking Modal -->
+    <div class="modal" id="bookingModal">
+      <div class="modal-card">
+        <h3 id="bookingTitle">Book Car</h3>
+        <div class="field">
+          <label>Full Name</label>
+          <input id="bookingName" placeholder="Your name" />
+        </div>
+        <div class="field">
+          <label>Pick-up Date</label>
+          <input id="bookingDate" type="date" />
+        </div>
+        <div class="field">
+          <label>Duration (days)</label>
+          <input id="bookingDays" type="number" value="1" min="1" />
+        </div>
+        <div class="total-amount" id="totalAmount">Total: $0</div>
+        <div class="modal-actions">
+          <button class="btn" id="confirmBooking">Confirm</button>
+          <button class="btn" id="closeBooking">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Car Modal -->
+    <div class="modal" id="addCarModal">
+      <div class="add-car-modal-card">
+        <h3>Add New Car</h3>
+        <img id="carImagePreview" class="image-preview" alt="Car preview" />
+        <div class="file-input-wrapper">
+          <input type="file" id="carImageFile" accept="image/*" />
+          <label for="carImageFile" class="file-input-label">📷 Click to upload car image</label>
+        </div>
+        <div class="field">
+          <label>Car Name</label>
+          <input id="carName" placeholder="e.g., BMW M5" />
+        </div>
+        <div class="field">
+          <label>Car Type</label>
+          <select id="carType">
+            <option value="">Select type</option>
+            <option value="sedan">Sedan</option>
+            <option value="suv">SUV</option>
+            <option value="electric">Electric</option>
+            <option value="sports">Sports</option>
+            <option value="luxury">Luxury</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Price per Day ($)</label>
+          <input id="carPrice" type="number" placeholder="e.g., 99" min="0" />
+        </div>
+        <div class="field">
+          <label>Number of Seats</label>
+          <input id="carSeats" type="number" placeholder="e.g., 5" min="1" max="9" />
+        </div>
+        <div class="modal-actions">
+          <button class="btn" id="confirmAddCar" style="background: var(--accent); color: white;">Add Car</button>
+          <button class="btn" id="closeAddCar">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+      <div class="modal-card">
+        <h3>🔐 Welcome Back</h3>
+        <div id="loginMessage"></div>
+        <form id="loginForm">
+          <div class="field">
+            <label for="loginEmail">Email Address</label>
+            <input id="loginEmail" type="email" placeholder="your@email.com" />
+          </div>
+          <div class="field">
+            <label for="loginPassword">Password</label>
+            <input id="loginPassword" type="password" placeholder="••••••••" />
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: 12px;">
+            <label style="display: flex; align-items: center; margin-bottom: 0;">
+              <input type="checkbox" id="loginRemember" style="margin-right: 6px; accent-color: var(--accent2);" />
+              <span>Remember me</span>
+            </label>
+            <a href="#" style="color: var(--accent2); text-decoration: none;">Forgot password?</a>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn" id="confirmLogin">Sign In</button>
+            <button type="button" class="btn" id="closeLogin">Cancel</button>
+          </div>
+          <div style="text-align: center; margin-top: 12px; font-size: 12px;">
+            Don't have an account? <button type="button" id="switchToRegister" style="background: none; border: none; color: var(--accent2); cursor: pointer; font-weight: 600; text-decoration: underline;">Register here</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+      <div class="modal-card">
+        <h3>🎯 Create Your Account</h3>
+        <div id="registerMessage"></div>
+        <form id="registerForm">
+          <div class="field">
+            <label for="registerName">Full Name</label>
+            <input id="registerName" type="text" placeholder="John Doe" />
+          </div>
+          <div class="field">
+            <label for="registerEmail">Email Address</label>
+            <input id="registerEmail" type="email" placeholder="your@email.com" />
+          </div>
+          <div class="field">
+            <label for="registerPhone">Phone Number</label>
+            <input id="registerPhone" type="tel" placeholder="+1 (555) 123-4567" />
+          </div>
+          <div class="field">
+            <label for="registerPassword">Password</label>
+            <input id="registerPassword" type="password" placeholder="••••••••" />
+          </div>
+          <div class="field">
+            <label for="registerConfirmPassword">Confirm Password</label>
+            <input id="registerConfirmPassword" type="password" placeholder="••••••••" />
+          </div>
+          <div class="field">
+            <label for="registerTerms">
+              <input type="checkbox" id="registerTerms" /> 
+              <span>I agree to the terms and conditions</span>
+            </label>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn" id="confirmRegister">Register Now</button>
+            <button type="button" class="btn" id="closeRegister">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Return Car Modal -->
+    <div class="modal" id="returnCarModal">
+      <div class="modal-card">
+        <h3 id="returnTitle">Return Car</h3>
+        <div class="field">
+          <label>Rental ID / Booking Reference</label>
+          <input id="returnRentalId" placeholder="Enter your rental ID" />
+        </div>
+        <div class="field">
+          <label>Car Name (For Reference)</label>
+          <input id="returnCarName" placeholder="e.g., BMW" />
+        </div>
+        <div class="field">
+          <label>Return Date</label>
+          <input id="returnDate" type="date" />
+        </div>
+        <div class="field">
+          <label>Odometer Reading (miles)</label>
+          <input id="returnOdometer" type="number" placeholder="e.g., 50000" />
+        </div>
+        <div class="field">
+          <label>Condition (Minor damage, etc.)</label>
+          <select id="returnCondition">
+            <option value="excellent">Excellent</option>
+            <option value="good">Good</option>
+            <option value="fair">Fair - Minor Damage</option>
+            <option value="poor">Poor - Significant Damage</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Comments</label>
+          <textarea id="returnComments" placeholder="Any additional notes..." style="height: 80px;"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button class="btn" id="confirmReturn" style="background: var(--accent2); color: #071130;">Confirm Return</button>
+          <button class="btn" id="closeReturn">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      Made by <b><i>Dev Ninjas 3</i></b> | Car Rental System &copy; 2025
+    </footer>
+
+    <script>
+      const fleet = [
+        {
+          id: 1,
+          name: "BMW",
+          type: "sedan",
+          price: 2999,
+          seats: 5,
+          img: "./BMW.jpg",
+        },
+        {
+          id: 2,
+          name: "Mustang Ford",
+          type: "suv",
+          price: 3499,
+          seats: 2,
+          img: "Ford.jpg",
+        },
+        {
+          id: 3,
+          name: "Ferrari",
+          type: "suv",
+          price: 4999,
+          seats: 1,
+          img: "Ferrari.jpg",
+        },
+        {
+          id: 4,
+          name: "Lamborghini",
+          type: "suv",
+          price: 6999,
+          seats: 2,
+          img: "lamborghini.jpg",
+        },
+        {
+          id: 5,
+          name: "Supra",
+          type: "suv",
+          price: 7999,
+          seats: 2,
+          img: "supra.jpg",
+        },
+      ];
+
+      const cardsContainer = document.getElementById("cardsContainer");
+      const searchCar = document.getElementById("searchCar");
+      const filterType = document.getElementById("filterType");
+      const resetFilter = document.getElementById("resetFilter");
+      const bookingModal = document.getElementById("bookingModal");
+      const bookingTitle = document.getElementById("bookingTitle");
+      const bookingName = document.getElementById("bookingName");
+      const bookingDate = document.getElementById("bookingDate");
+      const bookingDays = document.getElementById("bookingDays");
+      const totalAmount = document.getElementById("totalAmount");
+      const confirmBooking = document.getElementById("confirmBooking");
+      const closeBooking = document.getElementById("closeBooking");
+      const hamburger = document.querySelector(".hamburger");
+      const navLinks = document.querySelector(".nav-links");
+      const sendMessage = document.getElementById("sendMessage");
+
+      let selectedCar = null;
+
+      function render(list) {
+        cardsContainer.innerHTML = "";
+        list.forEach((car) => {
+          const div = document.createElement("div");
+          div.className = "card";
+          div.innerHTML = `<img src="${car.img}" alt="${car.name}">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <div><div style="font-weight:800">${car.name}</div><div style="opacity:.8;font-size:13px">${car.seats} seats • ${car.type}</div></div>
+            <div style="text-align:right"><div class="price">$${car.price}/day</div>
+            <div style="margin-top:8px"><button class="btn" data-id="${car.id}">Book</button></div></div></div>`;
+          cardsContainer.appendChild(div);
+        });
+      }
+      render(fleet);
+
+      function applyFilters() {
+        const q = searchCar.value.trim().toLowerCase();
+        const t = filterType.value;
+        const filtered = fleet.filter(
+          (c) =>
+            (t === "all" || c.type === t) &&
+            (q === "" || c.name.toLowerCase().includes(q))
+        );
+        render(filtered);
+      }
+      searchCar.addEventListener("input", applyFilters);
+      filterType.addEventListener("change", applyFilters);
+      resetFilter.addEventListener("click", () => {
+        searchCar.value = "";
+        filterType.value = "all";
+        render(fleet);
+      });
+
+      function calculateTotal() {
+        if (selectedCar && bookingDays.value) {
+          const total = selectedCar.price * parseInt(bookingDays.value);
+          totalAmount.textContent = `Total: $${total}`;
+        }
+      }
+
+      cardsContainer.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-id]");
+        if (!btn) return;
+
+        selectedCar = fleet.find((x) => x.id == btn.dataset.id);
+        bookingTitle.textContent = "Book: " + selectedCar.name;
+        bookingModal.classList.add("open");
+        bookingDays.value = 1;
+        calculateTotal();
+      });
+      
+      closeBooking.addEventListener("click", () =>
+        bookingModal.classList.remove("open")
+      );
+      bookingModal.addEventListener("click", (e) => {
+        if (e.target === bookingModal) bookingModal.classList.remove("open");
+      });
+      
+      bookingDays.addEventListener("input", calculateTotal);
+      
+      confirmBooking.addEventListener("click", async () => {
+        if (!bookingName.value || !bookingDate.value) {
+          alert("Please fill in all required fields");
+          return;
+        }
+
+        try {
+          const total = selectedCar.price * parseInt(bookingDays.value);
+          
+          alert(
+            `Thanks ${bookingName.value}! Booking confirmed for ${bookingDays.value} day(s) starting ${bookingDate.value}. Total amount: $${total}`
+          );
+          bookingModal.classList.remove("open");
+          
+          // Reset form
+          bookingName.value = "";
+          bookingDate.value = "";
+          bookingDays.value = 1;
+        } catch (error) {
+          console.error('Booking error:', error);
+          alert("Error creating booking. Please try again.");
+        }
+      });
+
+      hamburger.addEventListener("click", () => {
+        navLinks.classList.toggle("active");
+        hamburger.classList.toggle("active");
+      });
+
+      document
+        .getElementById("ctaViewFleet")
+        .addEventListener("click", () =>
+          document.getElementById("cars").scrollIntoView({ behavior: "smooth" })
+        );
+        
+      // Rent a Car button
+      document.getElementById("rentCarBtn").addEventListener("click", () => {
+        document.getElementById("cars").scrollIntoView({ behavior: "smooth" });
+      });
+
+      // Login button
+      document.getElementById("loginBtn").addEventListener("click", () => {
+        document.getElementById("loginModal").classList.add("open");
+      });
+
+      // Login Modal controls
+      const loginModal = document.getElementById("loginModal");
+      const closeLogin = document.getElementById("closeLogin");
+      const confirmLogin = document.getElementById("confirmLogin");
+      const loginMessage = document.getElementById("loginMessage");
+      const switchToRegister = document.getElementById("switchToRegister");
+
+      closeLogin.addEventListener("click", () => {
+        loginModal.classList.remove("open");
+        resetLoginForm();
+      });
+
+      loginModal.addEventListener("click", (e) => {
+        if (e.target === loginModal) {
+          loginModal.classList.remove("open");
+          resetLoginForm();
+        }
+      });
+
+      switchToRegister.addEventListener("click", (e) => {
+        e.preventDefault();
+        loginModal.classList.remove("open");
+        resetLoginForm();
+        registerModal.classList.add("open");
+      });
+
+      function resetLoginForm() {
+        document.getElementById("loginEmail").value = "";
+        document.getElementById("loginPassword").value = "";
+        document.getElementById("loginRemember").checked = false;
+        loginMessage.textContent = "";
+      }
+
+      function showLoginMessage(message, type) {
+        loginMessage.textContent = message;
+        loginMessage.style.color = type === "error" ? "#ff6b6b" : "#2ecc71";
+        loginMessage.className = type;
+      }
+
+      // Confirm Login functionality
+      confirmLogin.addEventListener("click", () => {
+        const email = document.getElementById("loginEmail").value.trim();
+        const password = document.getElementById("loginPassword").value;
+        const rememberMe = document.getElementById("loginRemember").checked;
+
+        // Validation
+        if (!email || !password) {
+          showLoginMessage("Please fill in all fields", "error");
+          return;
+        }
+
+        if (!email.includes("@")) {
+          showLoginMessage("Please enter a valid email", "error");
+          return;
+        }
+
+        if (password.length < 6) {
+          showLoginMessage("Password must be at least 6 characters", "error");
+          return;
+        }
+
+        // Get registered users from localStorage
+        const users = JSON.parse(localStorage.getItem("registeredUsers")) || [];
+        const user = users.find(u => u.email === email && u.password === password);
+
+        if (!user) {
+          showLoginMessage("Invalid email or password", "error");
+          return;
+        }
+
+        // Login successful
+        localStorage.setItem("currentUser", JSON.stringify({ name: user.name, email: user.email }));
+        if (rememberMe) {
+          localStorage.setItem("rememberMe", JSON.stringify({ email: email }));
+        }
+        
+        showLoginMessage("Login successful! Redirecting...", "success");
+        setTimeout(() => {
+          loginModal.classList.remove("open");
+          resetLoginForm();
+          // Update button text
+          updateAuthUI();
+          alert("Welcome " + user.name + "! You have been logged in successfully.");
+        }, 1500);
+      });
+
+      // Register button
+      document.getElementById("registerBtn").addEventListener("click", () => {
+        document.getElementById("registerModal").classList.add("open");
+      });
+
+      // Register Modal controls
+      const registerModal = document.getElementById("registerModal");
+      const closeRegister = document.getElementById("closeRegister");
+      const confirmRegister = document.getElementById("confirmRegister");
+      const registerMessage = document.getElementById("registerMessage");
+
+      closeRegister.addEventListener("click", () => {
+        registerModal.classList.remove("open");
+        resetRegisterForm();
+      });
+
+      registerModal.addEventListener("click", (e) => {
+        if (e.target === registerModal) {
+          registerModal.classList.remove("open");
+          resetRegisterForm();
+        }
+      });
+
+      function resetRegisterForm() {
+        document.getElementById("registerName").value = "";
+        document.getElementById("registerEmail").value = "";
+        document.getElementById("registerPhone").value = "";
+        document.getElementById("registerPassword").value = "";
+        document.getElementById("registerConfirmPassword").value = "";
+        document.getElementById("registerTerms").checked = false;
+        registerMessage.textContent = "";
+      }
+
+      function showRegisterMessage(message, type) {
+        registerMessage.textContent = message;
+        registerMessage.style.color = type === "error" ? "#ff6b6b" : "#2ecc71";
+      }
+
+      // Confirm Register functionality
+      confirmRegister.addEventListener("click", () => {
+        const name = document.getElementById("registerName").value.trim();
+        const email = document.getElementById("registerEmail").value.trim();
+        const phone = document.getElementById("registerPhone").value.trim();
+        const password = document.getElementById("registerPassword").value;
+        const confirmPassword = document.getElementById("registerConfirmPassword").value;
+        const termsAccepted = document.getElementById("registerTerms").checked;
+
+        // Validation
+        if (!name || !email || !phone || !password || !confirmPassword) {
+          showRegisterMessage("Please fill in all fields", "error");
+          return;
+        }
+
+        if (name.length < 3) {
+          showRegisterMessage("Name must be at least 3 characters", "error");
+          return;
+        }
+
+        if (!email.includes("@")) {
+          showRegisterMessage("Please enter a valid email", "error");
+          return;
+        }
+
+        if (phone.length < 10) {
+          showRegisterMessage("Please enter a valid phone number", "error");
+          return;
+        }
+
+        if (password.length < 6) {
+          showRegisterMessage("Password must be at least 6 characters", "error");
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          showRegisterMessage("Passwords do not match", "error");
+          return;
+        }
+
+        if (!termsAccepted) {
+          showRegisterMessage("Please accept the terms and conditions", "error");
+          return;
+        }
+
+        // Check if email already exists
+        const existingUsers = JSON.parse(localStorage.getItem("registeredUsers")) || [];
+        if (existingUsers.find(u => u.email === email)) {
+          showRegisterMessage("Email already registered", "error");
+          return;
+        }
+
+        // Save new user to localStorage
+        const newUser = { name, email, phone, password };
+        existingUsers.push(newUser);
+        localStorage.setItem("registeredUsers", JSON.stringify(existingUsers));
+
+        // Auto-login after registration
+        localStorage.setItem("currentUser", JSON.stringify({ name: email, email: email }));
+
+        showRegisterMessage("Registration successful! Welcome!", "success");
+        setTimeout(() => {
+          registerModal.classList.remove("open");
+          resetRegisterForm();
+          updateAuthUI();
+          alert(`Welcome ${name}! Your account has been created successfully.\n\nEmail: ${email}\nPhone: ${phone}\n\nYou can now use these credentials to book cars.`);
+        }, 1500);
+      });
+
+      // Return a Car button
+      document.getElementById("returnCarBtn").addEventListener("click", () => {
+        document.getElementById("returnCarModal").classList.add("open");
+      });
+
+      // Return Car Modal controls
+      const returnCarModal = document.getElementById("returnCarModal");
+      const closeReturn = document.getElementById("closeReturn");
+      const confirmReturn = document.getElementById("confirmReturn");
+
+      closeReturn.addEventListener("click", () => {
+        returnCarModal.classList.remove("open");
+        resetReturnForm();
+      });
+
+      returnCarModal.addEventListener("click", (e) => {
+        if (e.target === returnCarModal) {
+          returnCarModal.classList.remove("open");
+          resetReturnForm();
+        }
+      });
+
+      function resetReturnForm() {
+        document.getElementById("returnRentalId").value = "";
+        document.getElementById("returnCarName").value = "";
+        document.getElementById("returnDate").value = "";
+        document.getElementById("returnOdometer").value = "";
+        document.getElementById("returnCondition").value = "excellent";
+        document.getElementById("returnComments").value = "";
+      }
+
+      // Confirm Return functionality
+      confirmReturn.addEventListener("click", () => {
+        const rentalId = document.getElementById("returnRentalId").value.trim();
+        const carName = document.getElementById("returnCarName").value.trim();
+        const returnDate = document.getElementById("returnDate").value;
+        const odometer = document.getElementById("returnOdometer").value;
+        const condition = document.getElementById("returnCondition").value;
+        const comments = document.getElementById("returnComments").value.trim();
+
+        if (!rentalId || !carName || !returnDate || !odometer) {
+          alert("Please fill in all required fields");
+          return;
+        }
+
+        const confirmMessage = `Car Return Confirmed!
+
+Rental ID: ${rentalId}
+Car: ${carName}
+Return Date: ${returnDate}
+Odometer: ${odometer} miles
+Condition: ${condition}
+${comments ? "Comments: " + comments : ""}
+
+Thank you for choosing our service! Your return has been processed.`;
+
+        alert(confirmMessage);
+        returnCarModal.classList.remove("open");
+        resetReturnForm();
+      });
+        
+      // Smooth scrolling for navigation links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth'
+            });
+            // Close mobile menu if open
+            navLinks.classList.remove("active");
+            hamburger.classList.remove("active");
+          }
+        });
+      });
+      
+      // Contact form submission
+      sendMessage.addEventListener("click", () => {
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const message = document.getElementById("message").value;
+        
+        if (!name || !email || !message) {
+          alert("Please fill in all fields");
+          return;
+        }
+        
+        alert(`Thank you ${name}! Your message has been sent. We'll get back to you at ${email} soon.`);
+        
+        // Reset form
+        document.getElementById("name").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("message").value = "";
+      });
+      
+      // Set minimum date to today
+      const today = new Date().toISOString().split('T')[0];
+      bookingDate.min = today;
+
+      // ===== Add Car Functionality =====
+      const addCarModal = document.getElementById("addCarModal");
+      const addCarBtn = document.getElementById("addCarBtn");
+      const closeAddCar = document.getElementById("closeAddCar");
+      const confirmAddCar = document.getElementById("confirmAddCar");
+      const carImageFile = document.getElementById("carImageFile");
+      const carImagePreview = document.getElementById("carImagePreview");
+      const carName = document.getElementById("carName");
+      const carType = document.getElementById("carType");
+      const carPrice = document.getElementById("carPrice");
+      const carSeats = document.getElementById("carSeats");
+
+      let selectedImageData = null;
+
+      // Load cars from storage
+      async function loadCarsFromStorage() {
+        // Using local fleet data - no API calls
+        console.log('Using local fleet data');
+      }
+
+      // Save cars to database
+      async function saveFleetToStorage() {
+        // This is now handled by the API when adding cars
+        console.log('Fleet saved to database');
+      }
+
+      // Load cars on page load
+      loadCarsFromStorage().then(() => render(fleet));
+
+      // Open add car modal
+      addCarBtn.addEventListener("click", () => {
+        addCarModal.classList.add("open");
+      });
+
+      // Close add car modal
+      closeAddCar.addEventListener("click", () => {
+        addCarModal.classList.remove("open");
+        resetAddCarForm();
+      });
+
+      addCarModal.addEventListener("click", (e) => {
+        if (e.target === addCarModal) {
+          addCarModal.classList.remove("open");
+          resetAddCarForm();
+        }
+      });
+
+      // Handle image file selection
+      carImageFile.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            selectedImageData = event.target.result;
+            carImagePreview.src = selectedImageData;
+            carImagePreview.classList.add("show");
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // Reset add car form
+      function resetAddCarForm() {
+        carName.value = "";
+        carType.value = "";
+        carPrice.value = "";
+        carSeats.value = "";
+        carImageFile.value = "";
+        carImagePreview.classList.remove("show");
+        selectedImageData = null;
+      }
+
+      // Add car to fleet
+      confirmAddCar.addEventListener("click", async () => {
+        if (!carName.value || !carType.value || !carPrice.value || !carSeats.value || !selectedImageData) {
+          alert("Please fill in all fields and upload an image");
+          return;
+        }
+
+        try {
+          const newCar = {
+            id: Date.now(),
+            name: carName.value.trim(),
+            type: carType.value,
+            price: parseInt(carPrice.value),
+            seats: parseInt(carSeats.value),
+            image: selectedImageData
+          };
+
+          fleet.push(newCar);
+          render(fleet);
+          addCarModal.classList.remove("open");
+          resetAddCarForm();
+          alert(`${newCar.name} added successfully!`);
+        } catch (error) {
+          console.error('Error adding car:', error);
+          alert("Error adding car. Please try again.");
+        }
+      });
+
+      // Update Auth UI based on login status
+      function updateAuthUI() {
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        const loginBtn = document.getElementById("loginBtn");
+        const registerBtn = document.getElementById("registerBtn");
+        
+        if (currentUser) {
+          loginBtn.textContent = `Logout (${currentUser.name})`;
+          loginBtn.id = "logoutBtn";
+          loginBtn.style.background = "var(--accent)";
+          loginBtn.onclick = () => {
+            localStorage.removeItem("currentUser");
+            localStorage.removeItem("rememberMe");
+            updateAuthUI();
+            alert("You have been logged out successfully");
+          };
+          if (registerBtn) registerBtn.style.display = "none";
+        } else {
+          loginBtn.textContent = "Login";
+          loginBtn.id = "loginBtn";
+          loginBtn.style.background = "var(--accent2)";
+          loginBtn.style.color = "#071130";
+          loginBtn.onclick = () => document.getElementById("loginModal").classList.add("open");
+          if (registerBtn) registerBtn.style.display = "inline-block";
+        }
+      }
+
+      // Check if user was remembered on page load
+      const rememberMe = JSON.parse(localStorage.getItem("rememberMe"));
+      if (rememberMe) {
+        // Optional: Auto-fill email field if remembered
+        document.getElementById("loginEmail").value = rememberMe.email;
+      }
+
+      // Initialize auth UI on page load
+      updateAuthUI();
+    </script>
+  </body>
+</html>
